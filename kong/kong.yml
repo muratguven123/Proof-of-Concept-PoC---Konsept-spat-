@@ -1,7 +1,6 @@
 _format_version: "3.0"
 
 services:
-  # Keycloak - Token almak icin proxy
   - name: keycloak-service
     url: http://keycloak:8080
     routes:
@@ -10,6 +9,13 @@ services:
           - /auth
         strip_path: true
         preserve_host: true
+
+  - name: account-service
+    url: http://host.docker.internal:8082
+    routes:
+      - name: account-route
+        paths:
+          - /api/v1/accounts
 
   # Korunan API endpoint (mock)
   # JWT dogrulama setup-jwt.sh ile aktif edilir
@@ -20,8 +26,4 @@ services:
         paths:
           - /api
         strip_path: true
-    plugins:
-      - name: request-termination
-        config:
-          status_code: 200
-          message: "API Gateway uzerinden erisim basarili (JWT dogrulama henuz aktif degil)"
+
