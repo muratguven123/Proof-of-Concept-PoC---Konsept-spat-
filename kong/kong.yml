@@ -1,0 +1,11 @@
+_format_version: "3.0"
+
+services:
+  # Keycloak Authentication Service
+  - name: keycloak-service
+    url: http://keycloak:8080
+    routes:
+      - name: keycloak-route
+        paths:
+          - /auth
+        strip_path: true
