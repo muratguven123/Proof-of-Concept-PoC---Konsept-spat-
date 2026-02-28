@@ -1,7 +1,7 @@
 _format_version: "3.0"
 
 services:
-  # Keycloak Authentication Service
+  # Keycloak - Token almak icin proxy
   - name: keycloak-service
     url: http://keycloak:8080
     routes:
@@ -9,3 +9,4 @@ services:
         paths:
           - /auth
         strip_path: true
+        preserve_host: true
