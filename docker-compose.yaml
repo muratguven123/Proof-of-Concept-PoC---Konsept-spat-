@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Keycloak'un verilerini (kullanıcılar, token ayarları) tutacağı DB
+  postgres:
+    image: postgres:15
+    container_name: proffix-postgres
+    environment:
+      POSTGRES_DB: proof-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 190512
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - orion-network
+
+  # Güvenlik Otoritemiz
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.0
+    container_name: orion-keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - orion-network
+
+networks:
+  orion-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
