@@ -45,6 +45,14 @@ services:
       - orion-network
     restart: unless-stopped
 
+  # Account Service - Stateless kullanici bilgisi (JWT decode)
+  account-service:
+    build: ./account-service
+    container_name: orion-account-service
+    networks:
+      - orion-network
+    restart: unless-stopped
+
   # Güvenlik Otoritemiz
   keycloak:
     image: quay.io/keycloak/keycloak:23.0.0

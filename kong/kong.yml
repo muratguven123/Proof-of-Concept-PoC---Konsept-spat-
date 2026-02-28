@@ -11,17 +11,12 @@ services:
         strip_path: true
         preserve_host: true
 
-  # Korunan API endpoint (mock)
+  # Account Service - Stateless kullanici bilgisi
   # JWT dogrulama setup-jwt.sh ile aktif edilir
-  - name: protected-api
-    url: http://httpbin.org
+  - name: account-service
+    url: http://account-service:5000
     routes:
-      - name: protected-route
+      - name: account-route
         paths:
-          - /api
+          - /account
         strip_path: true
-    plugins:
-      - name: request-termination
-        config:
-          status_code: 200
-          message: "API Gateway uzerinden erisim basarili (JWT dogrulama henuz aktif degil)"
