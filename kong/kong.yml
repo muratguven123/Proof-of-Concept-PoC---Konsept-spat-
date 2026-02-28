@@ -10,3 +10,18 @@ services:
           - /auth
         strip_path: true
         preserve_host: true
+
+  # Korunan API endpoint (mock)
+  # JWT dogrulama setup-jwt.sh ile aktif edilir
+  - name: protected-api
+    url: http://httpbin.org
+    routes:
+      - name: protected-route
+        paths:
+          - /api
+        strip_path: true
+    plugins:
+      - name: request-termination
+        config:
+          status_code: 200
+          message: "API Gateway uzerinden erisim basarili (JWT dogrulama henuz aktif degil)"
