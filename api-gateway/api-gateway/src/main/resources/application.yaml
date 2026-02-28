@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: api-gateway
+
+
+security:
+  oauth2:
+    resourceserver:
+      jwt:
+        issuer-uri: http://auth-service:8080/realms/orion-realm
+
+cloud:
+  gateway:
+    routes:
+         id: keycloak-auth-route
+         uri: http://localhost:8080
+         predicates:
+             - Path=/auth/**
+         filters:
+             -StripPrefix=1
