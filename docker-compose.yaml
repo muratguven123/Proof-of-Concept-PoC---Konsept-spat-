@@ -6,9 +6,9 @@ services:
     image: postgres:15
     container_name: proffix-postgres
     environment:
-      POSTGRES_DB: proof-db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 190512
+      POSTGRES_DB: keycloak          # 'proof-db' yerine 'keycloak' yapıldı
+      POSTGRES_USER: keycloak        # 'postgres' yerine 'keycloak' yapıldı
+      POSTGRES_PASSWORD: password    # '190512' yerine 'password' yapıldı
     ports:
       - "5432:5432"
     volumes:
