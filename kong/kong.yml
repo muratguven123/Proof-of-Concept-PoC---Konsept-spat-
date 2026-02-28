@@ -10,20 +10,12 @@ services:
         strip_path: true
         preserve_host: true
 
+  # Account Service - Stateless kullanici bilgisi
+  # JWT dogrulama setup-jwt.sh ile aktif edilir
   - name: account-service
-    url: http://host.docker.internal:8082
+    url: http://account-service:5000
     routes:
       - name: account-route
         paths:
-          - /api/v1/accounts
-
-  # Korunan API endpoint (mock)
-  # JWT dogrulama setup-jwt.sh ile aktif edilir
-  - name: protected-api
-    url: http://httpbin.org
-    routes:
-      - name: protected-route
-        paths:
-          - /api
+          - /account
         strip_path: true
-

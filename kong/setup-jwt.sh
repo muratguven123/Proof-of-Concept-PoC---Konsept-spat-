@@ -119,13 +119,13 @@ services:
         strip_path: true
         preserve_host: true
 
-  # Korunan API endpoint (JWT dogrulama ile)
-  - name: protected-api
-    url: http://httpbin.org
+  # Account Service - JWT dogrulama ile korunan
+  - name: account-service
+    url: http://account-service:5000
     routes:
-      - name: protected-route
+      - name: account-route
         paths:
-          - /api
+          - /account
         strip_path: true
     plugins:
       - name: jwt
@@ -133,10 +133,6 @@ services:
           key_claim_name: iss
           claims_to_verify:
             - exp
-      - name: request-termination
-        config:
-          status_code: 200
-          message: "Basarili! JWT token dogrulandi. API Gateway uzerinden erisim onaylandi."
 YAML
 
 # Kong'a yeni config'i yukle
@@ -163,10 +159,13 @@ if [ "$HTTP_CODE" = "201" ]; then
     echo "       username     = <kullanici_adi>"
     echo "       password     = <sifre>"
     echo ""
-    echo "  2) KORUNAN API'YE ERIS:"
-    echo "     GET $KONG_PROXY/api/test"
+    echo "  2) KIM OLDUGUNU OGREN (stateless):"
+    echo "     GET $KONG_PROXY/account/me"
     echo "     Headers:"
     echo "       Authorization: Bearer <token>"
+    echo ""
+    echo "  3) TOKEN OLMADAN DENE (401 donmeli):"
+    echo "     GET $KONG_PROXY/account/me"
     echo ""
     echo "  ONEMLI: Token her zaman Kong uzerinden (port 8000)"
     echo "  alinmalidir. Dogrudan Keycloak'tan (port 8080) alinan"
@@ -176,6 +175,5 @@ else
     echo "  HATA: Kong yapilandirmasi yuklenemedi (HTTP $HTTP_CODE)"
     BODY=$(echo "$RESULT" | head -n -1)
     echo "  $BODY"
-    echo "  Config: $CONFIG_FILE"
     exit 1
 fi
