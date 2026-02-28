@@ -21,57 +21,26 @@ services:
       timeout: 5s
       retries: 5
 
-  # Kong'un kendi veritabanı
-  kong-database:
-    image: postgres:15
-    container_name: orion-kong-db
-    environment:
-      POSTGRES_DB: kong
-      POSTGRES_USER: kong
-      POSTGRES_PASSWORD: kongpass
-    volumes:
-      - kong_data:/var/lib/postgresql/data
-    networks:
-      - orion-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kong"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # API Gateway - tüm istekler buradan geçer
   kong:
     image: kong:3.5
     container_name: orion-api-gateway
     environment:
-      KONG_DATABASE: postgres
-      KONG_PG_HOST: kong-database
-      KONG_PG_DATABASE: kong
-      KONG_PG_USER: kong
-      KONG_PG_PASSWORD: kongpass
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_ADMIN_ERROR_LOG: /dev/stderr
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
-    command: >
-      bash -c "
-      echo 'Waiting for Kong database...' &&
-      until kong migrations bootstrap 2>/dev/null; do
-        echo 'Database not ready, retrying in 5s...' &&
-        sleep 5;
-      done &&
-      kong migrations up -y 2>/dev/null || true &&
-      kong migrations finish 2>/dev/null || true &&
-      echo 'Kong is starting...' &&
-      exec kong docker-start
-      "
+    volumes:
+      - ./kong:/etc/kong
     ports:
       - "8000:8000"   # API Gateway proxy portu
       - "8443:8443"   # API Gateway proxy SSL
       - "8001:8001"   # Kong Admin API
     depends_on:
-      - kong-database
+      - keycloak
     networks:
       - orion-network
     restart: unless-stopped
@@ -101,4 +70,3 @@ networks:
 
 volumes:
   postgres_data:
-  kong_data:
